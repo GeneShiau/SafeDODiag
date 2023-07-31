@@ -108,6 +108,8 @@ FUNCTION_BLOCK SContactor
 			Internal.Input.SO_In_OutputInterlockStates	:= Simulation.Input.InterlockStateOutput1 + Simulation.Input.InterlockStateOutput2 * 16#10;
 		ELSIF ( Config.InterlockState.ChannelPairSelector = 3 ) THEN
 			Internal.Input.SO_In_OutputInterlockStates	:= Simulation.Input.InterlockStateOutput1 * 16#100 + Simulation.Input.InterlockStateOutput2 * 16#1000;
+		ELSIF ( Config.InterlockState.ChannelPairSelector = 5 AND ADR(pSO6_In_OutputInterlockStates) > 0 ) THEN
+			Internal.Input.SO_In_OutputInterlockStates	:= Simulation.Input.InterlockStateOutput1 * 16#10000 + Simulation.Input.InterlockStateOutput2 * 16#100000;
 		ELSE
 			Internal.Input.SO_In_OutputInterlockStates	:= 0;
 		END_IF
@@ -159,8 +161,10 @@ FUNCTION_BLOCK SContactor
 		ELSE
 			Internal.Input.SO_In_Output2CurrentOK		:= 0;
 		END_IF
-		IF ( ADR(pSO_In_OutputInterlockStates) > 0 ) THEN
-			Internal.Input.SO_In_OutputInterlockStates	:= pSO_In_OutputInterlockStates;
+		IF ( ADR(pSO6_In_OutputInterlockStates) > 0 ) THEN
+			Internal.Input.SO_In_OutputInterlockStates	:= pSO6_In_OutputInterlockStates;
+		ELSIF ( ADR(pSO_In_OutputInterlockStates) > 0 ) THEN
+			Internal.Input.SO_In_OutputInterlockStates	:= UINT_TO_UDINT( pSO_In_OutputInterlockStates );
 		ELSE
 			Internal.Input.SO_In_OutputInterlockStates	:= 0;
 		END_IF
@@ -175,11 +179,19 @@ FUNCTION_BLOCK SContactor
 	IF ( Config.InterlockState.EnableMon ) THEN
 		CASE Config.InterlockState.ChannelPairSelector OF
 			1:
-				Internal.Input.InterlockStateOutput1 := UINT_TO_USINT( Internal.Input.SO_In_OutputInterlockStates AND 16#000F );
-				Internal.Input.InterlockStateOutput2 := UINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#00F0 ), 4) );
+				Internal.Input.InterlockStateOutput1 := UDINT_TO_USINT( Internal.Input.SO_In_OutputInterlockStates AND 16#00000F );
+				Internal.Input.InterlockStateOutput2 := UDINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#0000F0 ), 4) );
 			3:
-				Internal.Input.InterlockStateOutput1 := UINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#0F00 ), 8) );
-				Internal.Input.InterlockStateOutput2 := UINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#F000 ), 12) );
+				Internal.Input.InterlockStateOutput1 := UDINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#000F00 ), 8) );
+				Internal.Input.InterlockStateOutput2 := UDINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#00F000 ), 12) );
+			5:
+				IF ( ADR(pSO6_In_OutputInterlockStates) > 0 ) THEN
+					Internal.Input.InterlockStateOutput1 := UDINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#0F0000 ), 16) );
+					Internal.Input.InterlockStateOutput2 := UDINT_TO_USINT( SHR(( Internal.Input.SO_In_OutputInterlockStates AND 16#F00000 ), 20) );
+				ELSE
+					Internal.Input.InterlockStateOutput1 := 0;
+					Internal.Input.InterlockStateOutput2 := 0;
+				END_IF
 			ELSE
 				Internal.Input.InterlockStateOutput1 := 0;
 				Internal.Input.InterlockStateOutput2 := 0;
@@ -312,7 +324,9 @@ FUNCTION_BLOCK SContactor
 			
 			//#################### Check the setup of Output Interlock monitor ##################
 			ELSIF ( Config.InterlockState.EnableMon AND NOT(Diag.ErrorConfig) ) THEN
-				IF ( ADR(pSO_In_OutputInterlockStates) = 0 ) THEN
+				IF ( ( ADR(pSO_In_OutputInterlockStates) = 0 AND ADR(pSO6_In_OutputInterlockStates) = 0 )
+					OR ( Config.InterlockState.ChannelPairSelector = 5 AND ADR(pSO6_In_OutputInterlockStates) = 0 )
+					) THEN
 					DiagCode			:= 16#F016;
 					Diag.ErrorConfig	:= TRUE;
 					Diag.DiagText		:= 'NoOutputInterlockStateADR';
@@ -324,7 +338,10 @@ FUNCTION_BLOCK SContactor
 					DiagCode			:= 16#F025;
 					Diag.ErrorConfig	:= TRUE;
 					Diag.DiagText		:= 'MonitorTimeTooLong';
-				ELSIF ( (Config.InterlockState.ChannelPairSelector <> 1) AND (Config.InterlockState.ChannelPairSelector <> 3)) THEN
+				ELSIF ( (Config.InterlockState.ChannelPairSelector <> 1)
+					AND (Config.InterlockState.ChannelPairSelector <> 3)
+					AND (Config.InterlockState.ChannelPairSelector <> 5)
+					) THEN
 					DiagCode			:= 16#F026;
 					Diag.ErrorConfig	:= TRUE;
 					Diag.DiagText		:= 'InvalidOutputInterlockChannelPairSelector';

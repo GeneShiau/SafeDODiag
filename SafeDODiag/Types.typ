@@ -41,7 +41,7 @@ TYPE
 	END_STRUCT;
 	SContactorCfgInterlockStateType : 	STRUCT  (*Dual-channel safe digital output: Configure SO hardware-based output interlock state ("restart inhibit state") monitoring*)
 		EnableMon : BOOL; (*When TRUE the contactor function block will monitor SO hardware for output interlock state (require SO card's "Restart inhibit state information" turned on)*)
-		ChannelPairSelector : USINT; (*Selector for which byte of the output interlock channel represents the contactor pair (1 - contactor pair is on SO card channels 1 & 2; 3 - contactor pair is on SO card channels 3 & 4; 0/2/4/etc. - selection invalid)*)
+		ChannelPairSelector : USINT; (*Selector for which byte of the output interlock channel represents the contactor pair (1 - contactor pair is on SO card channels 1 & 2; 3 - contactor pair is on SO card channels 3 & 4; 5 - contactor pair is on SO card channels 5 & 6; 0/2/4/etc. - selection invalid)*)
 		StartDelayTime : TIME := T#3s; (*The amount of time the gray CPU fub will delay checking output interlock states after SO card shows SafeModuleOK (to allow channel diagnosis to complete after SO card reports SafeModuleOK)*)
 		MonitorTime : TIME; (*The amount of time the gray CPU fub will delay comparing interlock states' discrepancy*)
 	END_STRUCT;

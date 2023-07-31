@@ -15,6 +15,7 @@ FUNCTION_BLOCK SContactor (*Dual-channel safe digital output control and monitor
 		pSO_In_Output1CurrentOK : REFERENCE TO BOOL; (*Reference to the SO card's monitoring of channel current for contactor coil 1*)
 		pSO_In_Output2CurrentOK : REFERENCE TO BOOL; (*Reference to the SO card's monitoring of channel current for contactor coil 2*)
 		pSO_In_OutputInterlockStates : REFERENCE TO UINT; (*Reference to the SO card output interlocking states (each channel is 1 nibble in the range of 16#0 - 16#F)*)
+		pSO6_In_OutputInterlockStates : REFERENCE TO UDINT; (*Reference to the SO6xxx card output interlocking states (each channel is 1 nibble in the range of 16#0 - 16#F)*)
 	END_VAR
 	VAR_OUTPUT
 		Error : BOOL; (*Show that an error has occured to prevent output*)
@@ -40,6 +41,7 @@ FUNCTION_BLOCK SDigitalOut (*Single-channel safe digital output control and moni
 		pSI_In_DigitalOutFdbk : REFERENCE TO BOOL; (*Reference to the SI card input for the feedback status of the controlled digital output channel*)
 		pSO_In_OutputCurrentOK : REFERENCE TO BOOL; (*Reference to the SO card's monitoring of channel current for the controlled digital output channel*)
 		pSO_In_OutputInterlockStates : REFERENCE TO UINT; (*Reference to the SO card output interlocking states (each channel is 1 nibble in the range of 16#0 - 16#F)*)
+		pSO6_In_OutputInterlockStates : REFERENCE TO UDINT; (*Reference to the SO6xxx card output interlocking states (each channel is 1 nibble in the range of 16#0 - 16#F)*)
 	END_VAR
 	VAR_OUTPUT
 		Error : BOOL; (*Show that an error has occured to prevent output*)
