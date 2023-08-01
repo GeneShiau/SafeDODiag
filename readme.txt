@@ -1,4 +1,4 @@
-SafeDODiag is an Automation Studio library that monitors for errors when energizing single- or dual-channel safe digital output. This library is compatible with Safety Release and mapp Safety, and X20SO21x0 and X20SO41x0 hardware are currently supported.
+SafeDODiag is an Automation Studio library that monitors for errors when energizing single- or dual-channel safe digital output. This library is compatible with Safety Release and mapp Safety, and X20SO21x0, X20SO41x0, and X20SO6xx0 hardware are currently supported.
 
 To use, simply clone this repository to your computer and drag the SafeDODiag folder into your Automation Studio project's Libraries folder.
 
@@ -9,9 +9,9 @@ The SODiagDemo folder is a cyclic task example that shows how to configure the f
 There are several options for monitoring if a pair of safety contactors (wired in series) or a single safe digital output is operating as intended:
 - use a SF_EDM function block in the SafeDESIGNER code and pass the DiagCode back to the gray PLC
 - wire contactor/actuator feedbacks to (safe) digital input channels (feedback state and output state need to be opposite of each other) and check the feedbacks in the gray PLC
-- check X20SOx1x0 safe digital output channels' CurrentOK status in the gray PLC
-- (for Safety Release) enable X20SOx1x0's "Restart inhibit state information" and check each channel's FBK_Status_1 value in the gray PLC;
-  (for mapp Safety) enable X20SOx1x0's "State number for start interlock on error" and check each channel's FBOutputStateXXYY value in the gray PLC
+- check X20SOxxx0 safe digital output channels' CurrentOK status in the gray PLC
+- (for Safety Release) enable X20SOxxx0's "Restart inhibit state information" and check each channel's FBK_Status_1 value in the gray PLC;
+  (for mapp Safety) enable X20SOxxx0's "State number for start interlock on error" and check each channel's FBOutputStateXXYY value in the gray PLC
 This library simplifies the use of these monitoring options by combining them into a single function block with configurable monitoring options.
 
 
