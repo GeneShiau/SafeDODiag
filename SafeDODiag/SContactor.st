@@ -383,8 +383,8 @@ FUNCTION_BLOCK SContactor
 	Error := Diag.ErrorSafeFub OR Diag.ErrorInterlock OR Diag.ErrorCurrent OR Diag.ErrorFdbk OR Diag.ErrorConfig OR Diag.ErrorInternal;
 	
 	// Update fub IO status outputs
-	IF ( Internal.State > SC_CFG ) THEN
-		// Update IOSP outputs after fub cfg is successful
+	IF ( Internal.State > SC_INIT ) THEN
+		// Update IOSP outputs after fub init is successful, so all safety outputs are in a safe state before energizing and monitoring
 		Internal.Output.SO_Out_Contactor1	:= Cmd.OutputRequest;
 		Internal.Output.SO_Out_Contactor2	:= Cmd.OutputRequest;
 		
